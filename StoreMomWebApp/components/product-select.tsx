@@ -227,8 +227,8 @@ export function ProductSelect({
                         <span className={availableStock <= 5 ? "text-red-500 font-medium" : ""}>
                           สต็อก: {availableStock}
                         </span>
-                        <span>|</span>
-                        <span>฿{product.sellPrice.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</span>
+                        {/* <span>|</span>
+                        <span>฿{product.sellPrice.toLocaleString('th-TH', { minimumFractionDigits: 2 })}</span> */}
                       </div>
                     </div>
                     {value === product.productId.toString() && (

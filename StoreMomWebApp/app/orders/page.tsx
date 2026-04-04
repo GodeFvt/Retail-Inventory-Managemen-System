@@ -33,6 +33,7 @@ import { toast } from "@/components/ui/sonner";
 import { CustomerSelect } from "@/components/customer-select";
 import { ProductSelect } from "@/components/product-select";
 import { ProductMultiSelect } from "@/components/product-multi-select";
+import { no } from "zod/v4/locales";
 
 interface Product {
   productId: number;
@@ -64,6 +65,14 @@ interface Order {
   items?: OrderItem[];
 }
 
+const formatDateForInput = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,6 +91,7 @@ export default function OrdersPage() {
   // Form states
   const [customerId, setCustomerId] = useState("");
   const [note, setNote] = useState("");
+  const [orderDate, setOrderDate] = useState(formatDateForInput(new Date()));
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedProductData, setSelectedProductData] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState("");
@@ -113,16 +123,18 @@ export default function OrdersPage() {
   const [editQuantity, setEditQuantity] = useState("");
   const [editOriginalPrice, setEditOriginalPrice] = useState("");
   const [editSellingPrice, setEditSellingPrice] = useState("");
-  const [editFormErrors, setEditFormErrors] = useState<Record<string, string>>({});
+  const [editFormErrors, setEditFormErrors] = useState<Record<string, string>>({});  
 
   useEffect(() => {
     // Fetch orders with pagination and filters
     const fetchOrders = async () => {
       try {
         setLoading(true);
+        console.log("order date:", orderDate);
         const params = new URLSearchParams();
         params.set('page', currentPage.toString());
         params.set('limit', itemsPerPage.toString());
+        
         if (filterStatus && filterStatus !== "all") {
           params.set('status', filterStatus);
         }
@@ -162,7 +174,7 @@ export default function OrdersPage() {
       const params = new URLSearchParams();
       params.set('page', currentPage.toString());
       params.set('limit', itemsPerPage.toString());
-
+     
       const response = await fetch(`/api/orders?${params.toString()}`);
       const result = await response.json();
       
@@ -246,7 +258,7 @@ export default function OrdersPage() {
     setOriginalPrice("");
     setSellingPrice("");
   };
-
+  
   const removeItem = (index: number) => {
     setOrderItems(orderItems.filter((_, i) => i !== index));
   };
@@ -254,6 +266,16 @@ export default function OrdersPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormErrors({});
+    const [year, month, day] = orderDate.split("-");
+    const parsedOrderDate =
+      year && month && day
+        ? new Date(Number(year), Number(month) - 1, Number(day))
+        : null;
+
+    if (!parsedOrderDate || Number.isNaN(parsedOrderDate.getTime())) {
+      setFormErrors({ orderDate: "กรุณาเลือกวันที่" });
+      return;
+    }
 
     if (!customerId) {
       setFormErrors({ customer: "กรุณาเลือกลูกค้า" });
@@ -272,7 +294,7 @@ export default function OrdersPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customer_id: parseInt(customerId),
-          orderDate: new Date().toISOString(),
+          orderDate: parsedOrderDate.toISOString(),
           status: paymentStatus,
           note: note,
           items: orderItems.map((item) => ({
@@ -294,6 +316,7 @@ export default function OrdersPage() {
 
       setCustomerId("");
       setNote("");
+      setOrderDate(formatDateForInput(new Date()));
       setOrderItems([]);
       setPaymentStatus("pending");
       refetchOrders();
@@ -618,7 +641,7 @@ export default function OrdersPage() {
   const totalAmount = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
   const totalCost = orderItems.reduce((sum, item) => sum + (item.originalPrice * item.quantityOrdered), 0);
   const estimatedProfit = totalAmount - totalCost;
-
+  
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
@@ -687,6 +710,20 @@ export default function OrdersPage() {
                   placeholder="เพิ่มหมายเหตุ (ถ้ามี)"
                   className="rounded-xl"
                 />
+              </div>
+
+              <div className="space-y-2"> 
+                <Label>ลงวันที่ <span className="text-muted-foreground">(mm-dd-yyyy)</span> </Label>
+                <Input
+                  type="date"
+                  value={orderDate}
+                  onChange={(e) => setOrderDate(e.target.value)}
+                  lang="en-GB"
+                  className="rounded-xl"
+                />
+                {formErrors.orderDate && (
+                  <p className="text-xs text-destructive">{formErrors.orderDate}</p>
+                )}
               </div>
 
               {/* Add Items */}
