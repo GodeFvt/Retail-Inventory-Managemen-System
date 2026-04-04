@@ -659,9 +659,9 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid gap-6 xl:grid-cols-[minmax(320px,360px)_minmax(0,1fr)]">
         {/* Form - Left Side */}
-        <Card className="lg:col-span-1 border-0 shadow-xl shadow-gray-200/50 dark:shadow-none bg-white dark:bg-gray-900/50 rounded-2xl overflow-hidden">
+        <Card className="border-0 shadow-xl shadow-gray-200/50 dark:shadow-none bg-white dark:bg-gray-900/50 rounded-2xl overflow-hidden">
           <CardHeader className="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-orange-100 dark:border-orange-900/30">
             <CardTitle className="flex items-center gap-2">
               <Receipt className="h-5 w-5 text-orange-600" />
@@ -884,7 +884,7 @@ export default function OrdersPage() {
         </Card>
 
         {/* Table - Right Side */}
-        <Card className="lg:col-span-2 border-0 shadow-xl shadow-gray-200/50 dark:shadow-none bg-white dark:bg-gray-900/50 rounded-2xl overflow-hidden">
+        <Card className="min-w-0 border-0 shadow-xl shadow-gray-200/50 dark:shadow-none bg-white dark:bg-gray-900/50 rounded-2xl overflow-hidden">
           <CardHeader className="border-b border-gray-100 dark:border-gray-800">
             <div className="flex flex-col gap-4">
               <CardTitle>รายการออเดอร์</CardTitle>
@@ -965,19 +965,19 @@ export default function OrdersPage() {
               </div>
             ) : (
               <>
-                <div className="overflow-hidden">
-                  <Table>
+                <div className="min-w-0 overflow-hidden">
+                  <Table className="table-fixed">
                     <TableHeader>
                       <TableRow className="bg-gray-50/50 dark:bg-gray-800/50 hover:bg-gray-50/50">
-                        <TableHead className="font-semibold">เลขที่</TableHead>
-                        <TableHead className="font-semibold">ลูกค้า</TableHead>
-                        <TableHead className="font-semibold">วันที่</TableHead>
-                        <TableHead className="text-right font-semibold">ต้นทุน</TableHead>
-                        <TableHead className="text-right font-semibold">ยอดรวม</TableHead>
-                        <TableHead className="text-right font-semibold">กำไร</TableHead>
-                        <TableHead className="font-semibold">สถานะ</TableHead>
-                        <TableHead className="font-semibold">หมายเหตุ</TableHead>
-                        <TableHead className="w-[120px] font-semibold">จัดการ</TableHead>
+                        <TableHead className="w-[76px] px-3 font-semibold">เลขที่</TableHead>
+                        <TableHead className="px-3 font-semibold">ลูกค้า</TableHead>
+                        <TableHead className="w-[112px] px-3 font-semibold">วันที่</TableHead>
+                        {/* <TableHead className="text-right font-semibold">ต้นทุน</TableHead> */}
+                        <TableHead className="w-[108px] px-3 text-right font-semibold">ยอดรวม</TableHead>
+                        <TableHead className="w-[96px] px-3 text-right font-semibold">กำไร</TableHead>
+                        <TableHead className="w-[100px] px-3 font-semibold">สถานะ</TableHead>
+                        <TableHead className="hidden 2xl:table-cell w-[140px] px-3 font-semibold">หมายเหตุ</TableHead>
+                        <TableHead className="w-[112px] px-3 font-semibold">จัดการ</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -987,41 +987,48 @@ export default function OrdersPage() {
                           className="cursor-pointer hover:bg-orange-50/50 dark:hover:bg-orange-900/10 transition-colors"
                           onClick={() => handleRowClick(order)}
                         >
-                          <TableCell className="font-medium">
-                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm">
+                          <TableCell className="px-3 py-3 font-medium">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-xs xl:text-sm">
                               #{order.orderId}
                             </span>
                           </TableCell>
-                          <TableCell>{order.customerName}</TableCell>
-                          <TableCell className="text-muted-foreground">{formatDate(order.orderDate)}</TableCell>
-                          <TableCell className="text-right">
-                            <span className="text-muted-foreground">฿{formatPrice(order.totalAmount - order.profit)}</span>
+                          <TableCell className="px-3 py-3">
+                            <div className="min-w-0">
+                              <p className="truncate font-medium">{order.customerName}</p>
+                              <p className="truncate text-xs text-muted-foreground 2xl:hidden">
+                                {order.note || "-"}
+                              </p>
+                            </div>
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="px-3 py-3 text-sm text-muted-foreground whitespace-nowrap">{formatDate(order.orderDate)}</TableCell>
+                          {/* <TableCell className="text-right">
+                            <span className="text-muted-foreground">฿{formatPrice(order.totalAmount - order.profit)}</span>
+                          </TableCell> */}
+                          <TableCell className="px-3 py-3 text-right whitespace-nowrap">
                             <span className="font-semibold">฿{formatPrice(order.totalAmount)}</span>
                           </TableCell>
-                          <TableCell className={`text-right font-semibold ${order.profit < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
+                          <TableCell className={`px-3 py-3 text-right font-semibold whitespace-nowrap ${order.profit < 0 ? "text-destructive" : "text-emerald-600 dark:text-emerald-400"}`}>
                             ฿{formatPrice(order.profit)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="px-3 py-3">
                             <button
-                              className={`text-xs px-3 py-1.5 rounded-full cursor-pointer hover:opacity-90 transition-opacity font-medium ${getStatusBadge(order.status)}`}
+                              className={`w-full whitespace-nowrap text-[11px] xl:text-xs px-2 xl:px-2.5 py-1.5 rounded-full cursor-pointer hover:opacity-90 transition-opacity font-medium ${getStatusBadge(order.status)}`}
                               onClick={(e) => openStatusDialog(order, e)}
                             >
                               {getStatusText(order.status)}
                             </button>
                           </TableCell>
-                          <TableCell className="text-center max-w-[120px] truncate" >{order.note || "-"}</TableCell>
-                          <TableCell>
-                            <div className="flex gap-1">
+                          <TableCell className="hidden 2xl:table-cell px-3 py-3 text-center max-w-[140px] truncate">{order.note || "-"}</TableCell>
+                          <TableCell className="px-3 py-3">
+                            <div className="flex items-center gap-0.5 xl:gap-1">
                               <Button
                                 size="icon"
                                 variant="ghost"
                                 onClick={(e) => openDetailDialog(order, e)}
                                 title="ดูรายละเอียด"
-                                className="h-8 w-8 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
+                                className="h-7 w-7 xl:h-8 xl:w-8 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30"
                               >
-                                <Eye className="h-4 w-4 text-orange-600" />
+                                <Eye className="h-3.5 w-3.5 xl:h-4 xl:w-4 text-orange-600" />
                               </Button>
                               {order.status === "pending" && (
                                 <Button
@@ -1029,9 +1036,9 @@ export default function OrdersPage() {
                                   variant="ghost"
                                   onClick={(e) => openEditDialog(order, e)}
                                   title="แก้ไข"
-                                  className="h-8 w-8 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                                  className="h-7 w-7 xl:h-8 xl:w-8 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30"
                                 >
-                                  <Pencil className="h-4 w-4 text-blue-600" />
+                                  <Pencil className="h-3.5 w-3.5 xl:h-4 xl:w-4 text-blue-600" />
                                 </Button>
                               )}
                               <Button
@@ -1039,9 +1046,9 @@ export default function OrdersPage() {
                                 variant="ghost"
                                 onClick={(e) => openDeleteDialog(order, e)}
                                 title="ลบ"
-                                className="h-8 w-8 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30"
+                                className="h-7 w-7 xl:h-8 xl:w-8 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30"
                               >
-                                <Trash2 className="h-4 w-4 text-destructive" />
+                                <Trash2 className="h-3.5 w-3.5 xl:h-4 xl:w-4 text-destructive" />
                               </Button>
                             </div>
                           </TableCell>
