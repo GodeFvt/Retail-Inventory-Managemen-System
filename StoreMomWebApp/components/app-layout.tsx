@@ -12,6 +12,8 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  LogOut,
+  UserRound,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -55,8 +57,28 @@ export function AppLayout({ children }: AppLayoutProps) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = React.useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false)
+  const [currentUser, setCurrentUser] = React.useState<{ email: string; role: string } | null>(null)
 
   const currentPageTitle = pageTitles[pathname] || "StoreMom"
+  const isAuthPage = pathname === "/login" || pathname === "/setup"
+
+  React.useEffect(() => {
+    if (isAuthPage) return
+
+    fetch("/api/auth/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setCurrentUser(data?.user ?? null))
+      .catch(() => setCurrentUser(null))
+  }, [isAuthPage])
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" })
+    window.location.href = "/login"
+  }
+
+  if (isAuthPage) {
+    return <>{children}</>
+  }
 
   return (
     <TooltipProvider>
@@ -249,9 +271,22 @@ export function AppLayout({ children }: AppLayoutProps) {
 
 {/* Right Side */}
 <div className="ml-auto flex items-center gap-3">
+              {currentUser && (
+                <div className="hidden items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm dark:border-gray-800 dark:bg-gray-950 md:flex">
+                  <UserRound className="h-4 w-4 text-muted-foreground" />
+                  <span className="max-w-48 truncate font-medium">{currentUser.email}</span>
+                  <span className="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-950 dark:text-violet-300">
+                    {currentUser.role}
+                  </span>
+                </div>
+              )}
               <div className="hidden lg:block">
                 <ThemeToggle />
               </div>
+              <Button variant="outline" size="icon" onClick={handleLogout} className="rounded-xl">
+                <LogOut className="h-4 w-4" />
+                <span className="sr-only">ออกจากระบบ</span>
+              </Button>
             </div>
           </header>
 

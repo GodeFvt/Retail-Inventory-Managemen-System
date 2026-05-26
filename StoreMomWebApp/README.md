@@ -45,6 +45,7 @@ cp .env.example .env
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+JWT_SECRET="replace-with-a-long-random-secret"
 ```
 
 ### 3. Generate Prisma Client
