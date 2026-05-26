@@ -11,6 +11,8 @@
 - **Database:** Prisma Postgres / PostgreSQL
 - **ORM:** Prisma 7 with PostgreSQL Adapter
 
+See [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md) for the `src/` project layout inspired by `ixartz/Next-js-Boilerplate`.
+
 ## Features
 
 - จัดการลูกค้า (CRUD)
@@ -76,25 +78,21 @@ bun run dev
 
 ## โครงสร้างโปรเจค
 
-```
+```txt
 StoreMomWebApp/
-├── app/                    # Next.js App Router
-│   ├── api/               # API Routes
-│   │   ├── customers/     # Customer API
-│   │   ├── products/      # Product API
-│   │   ├── orders/        # Order API
-│   │   └── stats/         # Statistics API
-│   ├── customers/         # Customer Page
-│   ├── products/          # Product Page
-│   ├── orders/            # Order Page
-│   └── page.tsx           # Dashboard
-├── components/            # React Components
-│   └── ui/               # UI Components (shadcn/ui)
-├── lib/                   # Utilities
-│   ├── prisma.ts         # Prisma Client
-│   └── validations.ts    # Zod Schemas
-├── prisma/               # Prisma Schema
-└── database/             # SQL Scripts
+├── src/
+│   ├── app/               # Next.js App Router
+│   ├── components/        # React components
+│   ├── constants/         # Shared constants
+│   ├── libs/              # Library configuration
+│   ├── styles/            # Global styles
+│   ├── templates/         # Layout/page templates
+│   ├── types/             # Shared TypeScript types
+│   ├── utils/             # Utilities
+│   └── validations/       # Zod schemas
+├── prisma/                # Prisma schema and migrations
+├── public/                # static assets
+└── database/              # legacy SQL scripts
 ```
 
 ## API Endpoints
