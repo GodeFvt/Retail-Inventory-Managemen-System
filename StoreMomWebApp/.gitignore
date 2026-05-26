@@ -11,6 +11,9 @@ coverage/
 out/
 build/
 
+# Prisma generated client
+app/generated/
+
 # Production
 dist/
 

@@ -8,8 +8,8 @@
 - **Runtime:** Bun
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS v4
-- **Database:** MySQL / MariaDB
-- **ORM:** Prisma 7 with MariaDB Adapter
+- **Database:** Prisma Postgres / PostgreSQL
+- **ORM:** Prisma 7 with PostgreSQL Adapter
 
 ## Features
 
@@ -44,7 +44,7 @@ cp .env.example .env
 แก้ไข `.env`:
 
 ```env
-DATABASE_URL="mysql://username:password@localhost:3306/storemom"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
 ```
 
 ### 3. Generate Prisma Client
@@ -53,7 +53,19 @@ DATABASE_URL="mysql://username:password@localhost:3306/storemom"
 bunx prisma generate
 ```
 
-### 4. รัน Development Server
+### 4. Run Prisma Migration
+
+```bash
+bunx prisma migrate dev --name init
+```
+
+For Vercel, set `DATABASE_URL` from Vercel Storage > Prisma Postgres before running build or deployment. To apply committed migrations to Vercel Prisma Postgres, run:
+
+```bash
+bun run prisma:migrate:deploy
+```
+
+### 5. รัน Development Server
 
 ```bash
 bun run dev

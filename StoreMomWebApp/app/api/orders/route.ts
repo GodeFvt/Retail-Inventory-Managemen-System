@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@/app/generated/prisma/client';
 
 // GET orders with pagination
 // Query params: page (default 1), limit (default 10), customerId (optional), status (optional), productIds (optional, comma-separated)
